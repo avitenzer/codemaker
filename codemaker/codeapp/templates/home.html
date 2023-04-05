@@ -1,10 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<H1>Hello Home</H1>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if code %}
+
+<pre>
+<code class='line-numbers language-{{lang}}'>
+{{code}}
+
+</code>
+</pre>
+
+<br/><br/>
+
+<form method=POST action="{% url 'home' %}">
+    {% csrf_token %}
+
+    <div class="mb-3">
+  <textarea class="form-control" name="code"
+            placeholder="Have A.I. Fix My Code" rows="3">{{ code }}</textarea>
+    </div>
+
+    <select class="form-select" name="lang">
+        <option selected>Select Programming Language</option>
+        {% for lang in lang_list %}
+
+        <option value="{{ lang }}">{{ lang }}</option>
+
+        {% endfor %}
+    </select>
+    <br/><br/>
+
+    <button type="submit" class="btn btn-secondary">Submit</button>
+
+</form>
+<br/>
+
+{% else %}
+
+
+<pre>
+<code class='line-numbers language-python'>
+if name == "John":
+	print("Hello John!")
+else:
+	print("Hello Friend")
+</code>
+</pre>
+
+<br/><br/>
+
+<form method=POST action="{% url 'home' %}">
+    {% csrf_token %}
+
+    <div class="mb-3">
+  <textarea class="form-control" name="code"
+            placeholder="Have A.I. Fix My Code" rows="3"></textarea>
+    </div>
+
+    <select class="form-select" name="lang">
+        <option selected>Select Programming Language</option>
+        {% for lang in lang_list %}
+
+        <option value="{{ lang }}">{{ lang }}</option>
+
+        {% endfor %}
+    </select>
+    <br/><br/>
+
+    <button type="submit" class="btn btn-secondary">Submit</button>
+
+</form>
+<br/>
+{% endif %}
+
+
+
+
+{% endblock %}

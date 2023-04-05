@@ -1,6 +1,10 @@
 from django.shortcuts import render
 
-# Create your views here.
-
 def home(request):
-    return render(request, 'home.html', {})
+    lang_list = ['c', 'clike', 'cpp', 'csharp', 'css', 'css-extras', 'dart', 'django', 'fsharp', 'go', 'go-module', 'gradle', 'graphql', 'groovy', 'java', 'javadoc', 'javadoclike', 'javascript', 'json', 'json5', 'jsonp', 'jsx', 'markup', 'markup-templating', 'nginx', 'objectivec', 'perl', 'php', 'phpdoc', 'plsql', 'powershell', 'python', 'r', 'ruby', 'rust', 'sas', 'sass', 'scala', 'scss', 'sql', 'tcl', 'tsx', 'typescript', 'typoscript', 'xml-doc', 'yaml']
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        lang = request.POST.get('lang')
+        return render(request, 'home.html', {'code': code, 'lang': lang, 'lang_list': lang_list})
+
+    return render(request, 'home.html', {'lang_list': lang_list})
