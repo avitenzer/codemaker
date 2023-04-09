@@ -119,3 +119,12 @@ def history(request):
     else:
         snippets = Snippet.objects.filter(user_id=request.user.id)
         return render(request, 'history.html', {'snippets': snippets})
+
+def delete_snippet(request, question_id):
+    if not request.user.is_authenticated:
+        return redirect('home')
+    else:
+        snippet = Snippet.objects.get(pk=question_id)
+        snippet.delete()
+        messages.success(request, 'Snippet deleted successfully...')
+        return redirect('history')

@@ -6,12 +6,16 @@
 
 {% for snippet in snippets %}
 
-  {{ snippet.question }}<br/>
+  {{ snippet.question }}
+    <br/>
+    <br/>
 <pre>
   <code class='line-numbers language-{{snippet.language}}'>
             {{ snippet.code_snippet }}
   </code>
 </pre>
+
+<a href="{% url 'delete_snippet' snippet.id %}" class="btn btn-outline-secondary">Delete</a>
 
 {% endfor %}
 
