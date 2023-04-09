@@ -31,4 +31,4 @@ def home(request):
             print(e)
             return render(request, 'home.html', {'lang_list':lang_list, 'response':e, 'lang':lang})
 
-        return render(request, 'home.html', {'lang_list': lang_list})
+    return render(request, 'home.html', {'lang_list': lang_list})
