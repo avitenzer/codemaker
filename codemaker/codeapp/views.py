@@ -80,12 +80,13 @@ def login_user(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            print(user)
             login(request, user)
             messages.success(request, 'You have successfully logged in')
             return redirect('home')
         else:
             messages.success(request, 'Error logging in')
-            return redirect('login')
+            return redirect('home')
     else:
         return render(request, 'home.html', {})
 
