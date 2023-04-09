@@ -26,6 +26,9 @@ def home(request):
                 frequency_penalty = 0.0,
                 presence_penalty = 0.0,
             )
+
+            response = response['choices'][0]['text']
+
             return render(request, 'home.html', {'lang_list':lang_list, 'response':response, 'lang':lang})
         except Exception as e:
             print(e)
