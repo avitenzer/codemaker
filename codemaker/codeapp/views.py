@@ -5,7 +5,7 @@ import openai
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
-
+from .models import Snippet
 def home(request):
     print(os.getenv('API_KEY'))
     lang_list = ['c', 'clike', 'cpp', 'csharp', 'css', 'css-extras', 'dart', 'django', 'fsharp', 'go', 'go-module', 'gradle', 'graphql', 'groovy', 'java', 'javadoc', 'javadoclike', 'javascript', 'json', 'json5', 'jsonp', 'jsx', 'markup', 'markup-templating', 'nginx', 'objectivec', 'perl', 'php', 'phpdoc', 'plsql', 'powershell', 'python', 'r', 'ruby', 'rust', 'sas', 'sass', 'scala', 'scss', 'sql', 'tcl', 'tsx', 'typescript', 'typoscript', 'xml-doc', 'yaml']
@@ -32,7 +32,8 @@ def home(request):
             )
 
             response = response['choices'][0]['text']
-
+            code_snippet = Snippet(user=request.user, question=code, code_snippet=response, language=lang)
+            code_snippet.save()
             return render(request, 'home.html', {'lang_list':lang_list, 'response':response, 'lang':lang})
         except Exception as e:
             print(e)
@@ -66,6 +67,8 @@ def suggest(request):
             )
 
             response = response['choices'][0]['text']
+            code_snippet = Snippet(user=request.user, question=code, code_snippet=response, language=lang)
+            code_snippet.save()
 
             return render(request, 'suggest.html', {'lang_list':lang_list, 'response':response, 'lang':lang})
         except Exception as e:
@@ -109,3 +112,10 @@ def signup_user(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+def history(request):
+    if not request.user.is_authenticated:
+        return redirect('home')
+    else:
+        snippets = Snippet.objects.filter(user_id=request.user.id)
+        return render(request, 'history.html', {'snippets': snippets})

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if snippets %}
+
+{% for snippet in snippets %}
+
+  {{ snippet.question }}<br/>
+<pre>
+  <code class='line-numbers language-{{snippet.language}}'>
+            {{ snippet.code_snippet }}
+  </code>
+</pre>
+
+{% endfor %}
+
+{% endif %}
+
+
+{% endblock %}
