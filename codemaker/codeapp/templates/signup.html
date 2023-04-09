@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="text-center">Sign Up</h1>
+<br/>
+
+<div class="col-md-6 offset-md-3">
+  <form method="post" action="{% url 'signup' %}">
+    {% csrf_token %}
+    {% if form.errors %}
+    <div class="alert alert-primary" role="alert">
+      Your Form Has Errors
+      {% for field in form %}
+        {% if field.errors %}
+            <br/>
+            {{ field.errors }}
+            {% endif %}
+        {% endfor %}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {{ form.as_p }}
+    <input type="submit"  class="btn btn-secondary" value="Sign Up">
+  </form>
+
+
+
+
+</div>
+
+
+
+
+{% endblock %}
