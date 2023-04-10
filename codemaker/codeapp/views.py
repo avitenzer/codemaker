@@ -3,10 +3,12 @@ from django.contrib import messages
 import os
 import openai
 import requests
+import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
 from .models import Snippet
+
 def home(request):
     print(os.getenv('API_KEY'))
     lang_list = ['c', 'clike', 'cpp', 'csharp', 'css', 'css-extras', 'dart', 'django', 'fsharp', 'go', 'go-module', 'gradle', 'graphql', 'groovy', 'java', 'javadoc', 'javadoclike', 'javascript', 'json', 'json5', 'jsonp', 'jsx', 'markup', 'markup-templating', 'nginx', 'objectivec', 'perl', 'php', 'phpdoc', 'plsql', 'powershell', 'python', 'r', 'ruby', 'rust', 'sas', 'sass', 'scala', 'scss', 'sql', 'tcl', 'tsx', 'typescript', 'typoscript', 'xml-doc', 'yaml']
@@ -139,33 +141,29 @@ def images(request):
         openai.api_key = os.getenv('OPENAI_API_KEY')
         openai.Model.list()
         try:
-            print("code: ", code)
             response = openai.Image.create(
                 prompt="{code}",
                 n=1,
                 size="256x256"
             )
             image_dir_name = "images"
-            #image_dir = os.path.join(os.curdir, image_dir_name)
-            #image_dir = "/Users/avitenzer/Documents/_workspace/codemaker/codemaker/codeapp/images"
-
 
             current_directory = os.getcwd()
             image_dir = os.path.join(current_directory,image_dir_name)
             if not os.path.exists(image_dir):
                 os.makedirs(image_dir)
 
-            generated_image_name = "generated_image1.png"  # any name you like; the filetype should be .png
+            basename = "generated_image"
+            suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+            filename = "_".join([basename, suffix])
+            generated_image_name = filename +".png"
             generated_image_filepath = os.path.join(image_dir, generated_image_name)
 
-            generated_image_url = response["data"][0]["url"]  # extract image URL from response
-            generated_image = requests.get(generated_image_url).content  # download the image
+            generated_image_url = response["data"][0]["url"]
+            generated_image = requests.get(generated_image_url).content
 
             with open(generated_image_filepath, "wb") as image_file:
                 image_file.write(generated_image)
-            # response = response['choices'][0]['text']
-            # code_snippet = Snippet(user=request.user, question=code, code_snippet=response, language=lang)
-            # code_snippet.save()
 
             return render(request, 'images.html', {'response':generated_image_url})
         except Exception as e:
