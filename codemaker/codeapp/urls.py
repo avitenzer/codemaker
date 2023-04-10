@@ -9,5 +9,6 @@ urlpatterns = [
     path('signup', views.signup_user, name='signup'),
     path('history', views.history, name='history'),
     path('delete_snippet/<question_id>', views.delete_snippet, name='delete_snippet'),
+    path('images', views.images, name='images'),
 
 ]

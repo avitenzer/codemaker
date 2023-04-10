@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 import os
 import openai
+import requests
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
@@ -128,3 +129,47 @@ def delete_snippet(request, question_id):
         snippet.delete()
         messages.success(request, 'Snippet deleted successfully...')
         return redirect('history')
+
+def images(request):
+    print(os.getenv('API_KEY'))
+    if request.method == 'POST':
+        code = request.POST.get('code')
+
+        #OPENAI
+        openai.api_key = os.getenv('OPENAI_API_KEY')
+        openai.Model.list()
+        try:
+            print("code: ", code)
+            response = openai.Image.create(
+                prompt="{code}",
+                n=1,
+                size="256x256"
+            )
+            image_dir_name = "images"
+            #image_dir = os.path.join(os.curdir, image_dir_name)
+            #image_dir = "/Users/avitenzer/Documents/_workspace/codemaker/codemaker/codeapp/images"
+
+
+            current_directory = os.getcwd()
+            image_dir = os.path.join(current_directory,image_dir_name)
+            if not os.path.exists(image_dir):
+                os.makedirs(image_dir)
+
+            generated_image_name = "generated_image1.png"  # any name you like; the filetype should be .png
+            generated_image_filepath = os.path.join(image_dir, generated_image_name)
+
+            generated_image_url = response["data"][0]["url"]  # extract image URL from response
+            generated_image = requests.get(generated_image_url).content  # download the image
+
+            with open(generated_image_filepath, "wb") as image_file:
+                image_file.write(generated_image)
+            # response = response['choices'][0]['text']
+            # code_snippet = Snippet(user=request.user, question=code, code_snippet=response, language=lang)
+            # code_snippet.save()
+
+            return render(request, 'images.html', {'response':generated_image_url})
+        except Exception as e:
+            print(e)
+            return render(request, 'images.html', { 'response':e})
+
+    return render(request, 'images.html', {})
